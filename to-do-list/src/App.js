@@ -1,12 +1,10 @@
 import './App.css';
-import Icon from '@mui/material/Icon'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
 import Checkbox from '@mui/material/Checkbox'
 import { useState } from 'react';
 import Button from '@mui/material/Button'
-import Input from '@mui/material/Input'
 import TextField from '@mui/material/TextField'
+import IconCheck from '@mui/icons-material/Check'
+import IconClose from '@mui/icons-material/Clear'
 
 function App() {
   const [list, setList] = useState(localStorage.getItem("list") || [])
@@ -14,32 +12,45 @@ function App() {
   const [showEdit, setShowEdit] = useState(false)
   const [valEdit, setValEdit] = useState("")
 
+  const submitEdit = (data, i) => {
+    const lists = list
+    lists[i].text = data
+    setList(lists)
+    console.log(lists)
+    setShowEdit(false)
+  }
+
   return (
     <div className="App">
       <div className='Container'>
         <h3>
           TodoList
         </h3>
-        <TextField
-          id="text"
-          onChange={e => setTextInput(e.target.value)}
-          onKeyUp={e => {
-            if (e.key == "Enter") {
+        <div className='add-box'>
+          <TextField
+            id="text"
+            value={textInput}
+            onChange={e => setTextInput(e.target.value)}
+            onKeyUp={e => {
+              if (e.key == "Enter" && textInput.trim()) {
+                setList([...list, { text: textInput, check: false }])
+                setTextInput("")
+              }
+            }}
+          />
+          <div id="btn-add"
+            onClick={() => {
+              if (!textInput.trim()) return
               setList([...list, { text: textInput, check: false }])
-            }
-          }}
-        />
-        <Button
-          onClick={() => {
-            setList([...list, { text: textInput, check: false }])
-            console.log(list)
-          }}>
-          Add
-        </Button>
-        <div>
+              setTextInput("")
+            }}>
+            Add
+          </div>
+        </div>
+        <table>
           {list?.map((ele, i) => (
-            <>
-              <List style={{ textAlign: "left" }}>
+            <tr>
+              <td>
                 <Checkbox
                   checked={ele.check || ""}
                   onChange={e => {
@@ -53,25 +64,33 @@ function App() {
                     console.log(list)
                   }}
                 />
+              </td>
+              <td style={{ width: "100%", textAlign: "left" }}>
                 {showEdit === i ?
                   <TextField
                     value={valEdit}
                     onChange={e => setValEdit(e.target.value)}
                     onKeyUp={e => {
-                      if (e.key == "Enter") {
-                        const lists = list
-                        lists[i].text = e.target.value
-                        setList(lists)
-                        console.log(lists)
-                        setShowEdit(false)
+                      if (e.key == "Enter" && e.target.value.trim()) {
+                        submitEdit(e.target.value, i)
                       }
                     }}
                   />
                   :
                   ele.text
                 }
+              </td>
+              <td>
                 {showEdit === i ?
-                  ""
+                  <div style={{ whiteSpace: "nowrap" }}>
+                    <IconCheck id="btn"
+                      onClick={() => submitEdit(valEdit, i)} />
+                    <IconClose id="btn"
+                      onClick={() => {
+                        setShowEdit(false)
+                        // setValEdit(ele.text)
+                      }} />
+                  </div>
                   :
                   <Button
                     style={{ textAligh: "right" }}
@@ -82,12 +101,12 @@ function App() {
                     Edit
                   </Button>
                 }
-              </List>
-            </>
+              </td>
+            </tr>
           ))}
-        </div>
+        </table>
       </div>
-    </div>
+    </div >
   );
 }
 
