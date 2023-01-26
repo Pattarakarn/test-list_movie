@@ -1,13 +1,13 @@
 import './App.css';
 import Checkbox from '@mui/material/Checkbox'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import IconCheck from '@mui/icons-material/Check'
 import IconClose from '@mui/icons-material/Clear'
 
 function App() {
-  const [list, setList] = useState(localStorage.getItem("list") || [])
+  const [list, setList] = useState(JSON.parse(localStorage.getItem("list")) || [])
   const [textInput, setTextInput] = useState("")
   const [showEdit, setShowEdit] = useState(false)
   const [valEdit, setValEdit] = useState("")
@@ -19,6 +19,10 @@ function App() {
     console.log(lists)
     setShowEdit(false)
   }
+
+  useEffect(() => {
+    localStorage.setItem("list", JSON.stringify(list))
+  }, [list])
 
   return (
     <div className="App">
@@ -52,16 +56,15 @@ function App() {
             <tr>
               <td>
                 <Checkbox
-                  checked={ele.check || ""}
+                  defaultChecked={ele.check}
+                  // checked={ele.check || ""}
                   onChange={e => {
-                    if (!ele.check) {
-                      const lists = list
-                      lists[i].check = true
-                      setList(lists)
-                    } else {
-
-                    }
-                    console.log(list)
+                    console.log(ele.check)
+                    // if (!ele.check) {
+                    // const lists = list
+                    list[i].check = !list[i].check
+                    // setList(lists)
+                    localStorage.setItem("list", JSON.stringify(list))
                   }}
                 />
               </td>
@@ -82,9 +85,9 @@ function App() {
               </td>
               <td>
                 {showEdit === i ?
-                  <div style={{ whiteSpace: "nowrap" }}>
+                  <div className='buttons'>
                     <IconCheck id="btn"
-                      onClick={() => submitEdit(valEdit, i)} />
+                      onClick={() => valEdit.trim() && submitEdit(valEdit, i)} />
                     <IconClose id="btn"
                       onClick={() => {
                         setShowEdit(false)

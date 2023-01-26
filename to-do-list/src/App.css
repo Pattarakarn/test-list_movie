@@ -24,7 +24,7 @@
   cursor: pointer;
 }
 
-input {
+input:not(.PrivateSwitchBase-input) {
   padding: .5em !important;
   width: 50vw !important;
   max-width: 600px;
@@ -50,4 +50,15 @@ input {
   #btn-add {
     margin-left: 5%;
   }
+}
+
+.buttons {
+  white-space: nowrap;
+  width: 10vw;
+  /* max-width: ; */
+  text-align: left;
+}
+
+#btn:hover {
+  color: coral;
 }
